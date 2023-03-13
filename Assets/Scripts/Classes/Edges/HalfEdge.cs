@@ -13,7 +13,7 @@ namespace HalfEdge
         public Face face;
         public HalfEdge prevEdge;
         public HalfEdge nextEdge;
-        public HalfEdge twinEdge; // todo
+        public HalfEdge twinEdge;
     }
 
     public class Vertex
@@ -62,7 +62,7 @@ namespace HalfEdge
                 for (int j = 0; j < 4; j++)
                 {
                     Vertex outgoingVertex = this.vertices.First(p => p.index == originalFaces[4 * i + j]);
-                    HalfEdge localEdge = new HalfEdge
+                    HalfEdge localEdge = new()
                     {
                         index = this.edges.Count,
                         face = localFace,
@@ -90,7 +90,7 @@ namespace HalfEdge
             }
 
             // Now that everything is set we add the twin edges
-            foreach (var edge in this.edges)
+            foreach (HalfEdge edge in this.edges)
             {
                 if (edge.twinEdge != null) continue;
 
@@ -116,14 +116,14 @@ namespace HalfEdge
 
         public Mesh ConvertToFaceVertexMesh()
         {
-            Mesh faceVertexMesh = new Mesh();
+            Mesh faceVertexMesh = new();
 
             // Set vertices
             faceVertexMesh.SetVertices(this.vertices.Select(p => p.position).ToList());
 
             // Get faces indices
-            List<int> indices = new List<int>();
-            foreach (var face in this.faces)
+            List<int> indices = new();
+            foreach (Face face in this.faces)
             {
                 HalfEdge localEdge = face.edge;
                 for (int i = 0; i < 4; i++)
