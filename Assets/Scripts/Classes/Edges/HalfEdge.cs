@@ -144,9 +144,57 @@ namespace HalfEdge
 
         public string ConvertToCSVFormat(string separator = "\t")
         {
-            string str = "";
-            //magic happens
-            return str;
+            List<string> strings = new List<string>();
+
+            for (int i = 0; i < this.vertices.Count; i++)
+            {
+                Vertex vertex = this.vertices[i];
+                string line = $"{i}{separator}{vertex.position.x:N03} {vertex.position.y:N03} {vertex.position.z:N03}{separator}{vertex.outgoingEdge.index}{separator}{separator}";
+                strings.Add(line);
+            }
+
+            for (int i = 0; i < this.edges.Count; i++)
+            {
+                HalfEdge edge = this.edges[i];
+                string line = $"{i}{separator}" +
+                    $"{edge.sourceVertex.index.ToString() ?? "null"}{separator}" +
+                    $"{edge.face?.index.ToString() ?? "null"}{separator}" +
+                    $"{edge.prevEdge?.index.ToString() ?? "null"}{separator}" +
+                    $"{edge.nextEdge?.index.ToString() ?? "null"}{separator}" +
+                    $"{edge.twinEdge?.index.ToString() ?? "null"}{separator}{separator}";
+
+                if (strings.Count > i)
+                    strings[i] += line;
+                else
+                    strings.Add($"{separator}{separator}{separator}{separator}{line}");
+            }
+
+            for (int i = this.edges.Count; i < this.faces.Count / 4; i++)
+                strings.Add(separator + separator + separator);
+
+            for (int i = 0; i < this.faces.Count / 4; i++)
+            {
+                int[] localVertices = new int[4];
+                HalfEdge localEdge = this.faces[i].edge;
+                for (int j = 0; j < 4; j++)
+                {
+                    localVertices[j] = localEdge.sourceVertex.index;
+                    localEdge = localEdge.nextEdge;
+                }
+
+                string line = i.ToString() + separator + string.Join(",", localVertices);
+
+                if (strings.Count > i)
+                    strings[i] += line;
+                else
+                    strings.Add($"{separator}{separator}{separator}{separator}{separator}{separator}{separator}{line}");
+            }
+
+            return "Vertices" + separator + separator + separator + separator + "Edges" + separator + separator + separator + separator + separator + separator + separator + "Faces\n"
+                + "Index" + separator + "Position" + separator + "Outgoing edge index" + separator + separator
+                + "Index" + separator + "Source vertex" + separator + "Face" + separator + "Previous edge" + separator + "Next edge" + separator + "Twin edge" + separator + separator
+                + "Index" + separator + "Indices des vertices\n"
+                + string.Join("\n", strings);
         }
 
         public void DrawGizmos(bool drawVertices, bool drawEdges, bool drawFaces)
