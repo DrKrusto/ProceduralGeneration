@@ -728,7 +728,7 @@ public class MeshGenerator : MonoBehaviour
     private void OnDrawGizmos()
     {
         if(test != null)
-            test.DrawGizmos(true, true, true);
+            test.DrawGizmos(m_Mf.transform);
     }
 
     string ConvertToCSV(string separator)

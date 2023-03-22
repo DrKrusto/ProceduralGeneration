@@ -197,7 +197,7 @@ namespace HalfEdge
                 + string.Join("\n", strings);
         }
 
-        public void DrawGizmos(bool drawVertices, bool drawEdges, bool drawFaces)
+        public void DrawGizmos(Transform origin, bool drawVertices = true, bool drawEdges = true, bool drawFaces = true)
         {
             GUIStyle style = new GUIStyle();
             style.fontSize = 15;
@@ -207,7 +207,8 @@ namespace HalfEdge
             {
                 foreach (Vertex vertice in this.vertices)
                 {
-                    Handles.Label(vertice.position, vertice.index.ToString(), style);
+                    Vector3 worldPos = origin.TransformPoint(vertice.position);
+                    Handles.Label(worldPos, vertice.index.ToString(), style);
                 }
             }
 
@@ -218,8 +219,8 @@ namespace HalfEdge
             {
                 foreach (HalfEdge edge in this.edges)
                 {
-                    Vector3 pt1 = edge.sourceVertex.position;
-                    Vector3 pt2 = edge.nextEdge.sourceVertex.position;
+                    Vector3 pt1 = origin.TransformPoint(edge.sourceVertex.position);
+                    Vector3 pt2 = origin.TransformPoint(edge.nextEdge.sourceVertex.position);
                     Gizmos.DrawLine(pt1, pt2);
                     Handles.Label((pt1 + pt2) / 2.0f, edge.index.ToString(), style);
                 }
@@ -233,7 +234,7 @@ namespace HalfEdge
                     HalfEdge localEdge = face.edge;
                     for (int i = 0; i < 4; i++)
                     {
-                        pt += localEdge.sourceVertex.position;
+                        pt += origin.TransformPoint(localEdge.sourceVertex.position);
                         localEdge = localEdge.nextEdge;
                     }
                     Handles.Label(pt / 4.0f, face.index.ToString(), style);
