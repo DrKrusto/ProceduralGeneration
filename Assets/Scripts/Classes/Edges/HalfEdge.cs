@@ -199,7 +199,46 @@ namespace HalfEdge
 
         public void DrawGizmos(bool drawVertices, bool drawEdges, bool drawFaces)
         {
-            //magic happens
+            GUIStyle style = new GUIStyle();
+            style.fontSize = 15;
+            style.normal.textColor = Color.red;
+
+            if (drawVertices)
+            {
+                foreach (Vertex vertice in this.vertices)
+                {
+                    Handles.Label(vertice.position, vertice.index.ToString(), style);
+                }
+            }
+
+            Gizmos.color = Color.black;
+            style.normal.textColor = Color.blue;
+
+            if (drawEdges)
+            {
+                foreach (HalfEdge edge in this.edges)
+                {
+                    Vector3 pt1 = edge.sourceVertex.position;
+                    Vector3 pt2 = edge.nextEdge.sourceVertex.position;
+                    Gizmos.DrawLine(pt1, pt2);
+                    Handles.Label((pt1 + pt2) / 2.0f, edge.index.ToString(), style);
+                }
+            }
+
+            if (drawFaces)
+            {
+                foreach (Face face in this.faces)
+                {
+                    Vector3 pt = new Vector3(0, 0, 0);
+                    HalfEdge localEdge = face.edge;
+                    for (int i = 0; i < 4; i++)
+                    {
+                        pt += localEdge.sourceVertex.position;
+                        localEdge = localEdge.nextEdge;
+                    }
+                    Handles.Label(pt / 4.0f, face.index.ToString(), style);
+                }
+            }
         }
     }
 }
