@@ -1247,6 +1247,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  m_DisplayMeshInfo: 0
+  m_DisplayMeshEdges: 0
+  m_DisplayMeshVertices: 0
+  m_DisplayMeshFaces: 0
 --- !u!33 &1059593529
 MeshFilter:
   m_ObjectHideFlags: 0

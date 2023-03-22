@@ -7,6 +7,8 @@ using System.Linq;
 using Unity.Mathematics;
 using static Unity.Mathematics.math;
 using UnityEditor;
+using WingedEdge;
+using Unity.VisualScripting;
 
 delegate Vector3 ComputePosDelegate(float kX, float kZ);
 delegate float3 ComputePosDelegate_SIMD(float3 k);
@@ -31,7 +33,9 @@ public class MeshGenerator : MonoBehaviour
     [SerializeField] bool m_DisplayMeshEdges = true;
     [SerializeField] bool m_DisplayMeshVertices = true;
     [SerializeField] bool m_DisplayMeshFaces = true;
-    
+
+    WingedEdgeMesh test;
+
     void Update()
     {
         //Spline position
@@ -68,8 +72,10 @@ public class MeshGenerator : MonoBehaviour
         m_Mf.mesh = CreateNormalizedGridXZ_QUADS(int3(10,1,7),(k)=> {
             return lerp(float3(-5,0,-3),float3(5,0,3),k);
             });
-        
-        GUIUtility.systemCopyBuffer = ConvertToCSV("\t");
+
+        test = new WingedEdgeMesh(m_Mf.mesh);
+
+        GUIUtility.systemCopyBuffer = test.ConvertToCSVFormat();
 
         //Cylindre
         /*
@@ -429,7 +435,7 @@ public class MeshGenerator : MonoBehaviour
         }
     }
     */
-
+    /*
     private void OnDrawGizmos()
     {
         if (!(m_Mf && m_Mf.mesh && m_DisplayMeshInfo)) return;
@@ -482,7 +488,12 @@ public class MeshGenerator : MonoBehaviour
             }
         }
     }
+    */
 
+    private void OnDrawGizmos()
+    {
+        test.DrawGizmos(true, true, true);
+    }
     string ConvertToCSV(string separator)
     {
         if (!(m_Mf && m_Mf.mesh)) return "";
