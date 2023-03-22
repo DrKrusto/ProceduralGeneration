@@ -492,8 +492,10 @@ public class MeshGenerator : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        test.DrawGizmos(true, true, true);
+        if(test != null)
+            test.DrawGizmos(true, true, true);
     }
+
     string ConvertToCSV(string separator)
     {
         if (!(m_Mf && m_Mf.mesh)) return "";
