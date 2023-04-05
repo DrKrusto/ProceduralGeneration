@@ -429,12 +429,15 @@ namespace HalfEdge
             };
             this.vertices.Add(newVertex);
 
-            int initialEdgeIndex = face.edge.index;
-
-            HalfEdge currentEdge = face.edge;
+            HalfEdge currentEdge = face.edge.nextEdge;
+            int initialEdgeIndex = currentEdge.index;
             Face currentFace = face;
+
             do
             {
+                // Variable to skip edges
+                HalfEdge skippedEdge = currentEdge.nextEdge.nextEdge;
+
                 currentFace.edge = currentEdge;
 
                 HalfEdge firstEdge = new HalfEdge
@@ -442,7 +445,7 @@ namespace HalfEdge
                     index = this.edges.Count,
                     face = currentFace,
                     prevEdge = currentEdge,
-                    sourceVertex = currentEdge.sourceVertex
+                    sourceVertex = currentEdge.nextEdge.sourceVertex
                 };
 
                 HalfEdge secondEdge = new HalfEdge
@@ -458,11 +461,18 @@ namespace HalfEdge
                 firstEdge.nextEdge = secondEdge;
                 face.edge = currentEdge;
 
+                // Redifine current edge
+                currentEdge.face = currentFace;
+                currentEdge.prevEdge.face = currentFace;
+                currentEdge.nextEdge = firstEdge;
+
                 this.edges.Add(firstEdge);
                 this.edges.Add(secondEdge);
 
-                currentEdge = currentEdge.nextEdge.nextEdge;
+                // Skip to further edge
+                currentEdge = skippedEdge;
 
+                // End of loop
                 if (currentEdge.index != initialEdgeIndex)
                 {
                     currentFace = new Face
