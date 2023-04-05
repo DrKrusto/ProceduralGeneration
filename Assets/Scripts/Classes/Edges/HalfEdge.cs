@@ -459,7 +459,7 @@ namespace HalfEdge
 
                 newVertex.outgoingEdge = secondEdge;
                 firstEdge.nextEdge = secondEdge;
-                face.edge = currentEdge;
+                currentFace.edge = currentEdge;
 
                 // Redifine current edge
                 currentEdge.face = currentFace;
