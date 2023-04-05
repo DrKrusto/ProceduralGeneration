@@ -177,7 +177,7 @@ namespace HalfEdge
             for (int i = this.edges.Count; i < this.faces.Count / 4; i++)
                 strings.Add(separator + separator + separator);
 
-            for (int i = 0; i < this.faces.Count / 4; i++)
+            for (int i = 0; i < this.faces.Count; i++)
             {
                 int[] localVertices = new int[4];
                 HalfEdge localEdge = this.faces[i].edge;
@@ -301,7 +301,7 @@ namespace HalfEdge
                 HalfEdge currentEdge = face.edge;
                 for (int i = 0; i < 4; i++)
                 {
-                    verticeToCalculate += face.edge.sourceVertex.position;
+                    verticeToCalculate += currentEdge.sourceVertex.position;
                     currentEdge = currentEdge.nextEdge;
                 }
                 facePoints.Add(verticeToCalculate/4f);
@@ -339,13 +339,24 @@ namespace HalfEdge
                 float n = 0;
 
                 HalfEdge currentEdge = vertex.outgoingEdge;
+                // Verify if on border
                 do
                 {
                     // Verify if on border
                     if(currentEdge.twinEdge == null)
                     {
+                        // We add the current edge mid point
                         borderMidPoints.Add(midPoints[currentEdge.index]);
-                        continue;
+                        
+                        // We rotate around the vertex to find the other edge on border
+                        while (currentEdge.prevEdge.twinEdge != null)
+                        {
+                            currentEdge = currentEdge.prevEdge.twinEdge;
+                        }
+
+                        // We add the other edge mid point
+                        borderMidPoints.Add(midPoints[currentEdge.prevEdge.index]);
+                        break;
                     }
 
                     // Moyenne des face points des faces adjacentes à la vertice

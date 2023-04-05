@@ -35,7 +35,7 @@ public class MeshGenerator : MonoBehaviour
     [SerializeField] bool m_DisplayMeshVertices = true;
     [SerializeField] bool m_DisplayMeshFaces = true;
 
-    WingedEdgeMesh test;
+    HalfEdgeMesh test;
 
     void Update()
     {
@@ -62,10 +62,10 @@ public class MeshGenerator : MonoBehaviour
 
         Mesh mesh = CreateNormalizedGridXZ_QUADS(int3(1,1,1));
         m_Mf.mesh = mesh;
-        HalfEdgeMesh halfEdgeMesh = new HalfEdgeMesh(mesh);
-        halfEdgeMesh.SubdivideCatmullClark();
-        //GUIUtility.systemCopyBuffer = ConvertToCSV("\t");
-        m_Mf.mesh = halfEdgeMesh.ConvertToFaceVertexMesh();
+        test = new HalfEdgeMesh(mesh);
+        test.SubdivideCatmullClark();
+        GUIUtility.systemCopyBuffer = test.ConvertToCSVFormat();
+        m_Mf.mesh = test.ConvertToFaceVertexMesh();
 
 
         //Grid
