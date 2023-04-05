@@ -9,6 +9,7 @@ using static Unity.Mathematics.math;
 using UnityEditor;
 using WingedEdge;
 using Unity.VisualScripting;
+using HalfEdge;
 
 delegate Vector3 ComputePosDelegate(float kX, float kZ);
 delegate float3 ComputePosDelegate_SIMD(float3 k);
@@ -59,6 +60,13 @@ public class MeshGenerator : MonoBehaviour
         //m_Mf.mesh = CreateStripXZ(new Vector3(4,0,1),100);
         //m_Mf.mesh = CreateGridXZ(new Vector3(4,0,3), 10, 7);
 
+        Mesh mesh = CreateNormalizedGridXZ_QUADS(int3(1,1,1));
+        m_Mf.mesh = mesh;
+        HalfEdgeMesh halfEdgeMesh = new HalfEdgeMesh(mesh);
+        halfEdgeMesh.SubdivideCatmullClark();
+        //GUIUtility.systemCopyBuffer = ConvertToCSV("\t");
+        m_Mf.mesh = halfEdgeMesh.ConvertToFaceVertexMesh();
+
 
         //Grid
         /*
@@ -68,14 +76,14 @@ public class MeshGenerator : MonoBehaviour
         */
 
         //Grid
-        
-        m_Mf.mesh = CreateNormalizedGridXZ_QUADS(int3(10,1,7),(k)=> {
-            return lerp(float3(-5,0,-3),float3(5,0,3),k);
-            });
 
-        test = new WingedEdgeMesh(m_Mf.mesh);
+        //m_Mf.mesh = CreateNormalizedGridXZ_QUADS(int3(10,1,7),(k)=> {
+        //    return lerp(float3(-5,0,-3),float3(5,0,3),k);
+        //    });
 
-        GUIUtility.systemCopyBuffer = test.ConvertToCSVFormat();
+        //test = new WingedEdgeMesh(m_Mf.mesh);
+
+        //GUIUtility.systemCopyBuffer = test.ConvertToCSVFormat();
 
         //Cylindre
         /*
@@ -110,7 +118,7 @@ public class MeshGenerator : MonoBehaviour
             return OOmega + r * Mathf.Cos(alpha) * OOmega.normalized + r*Mathf.Sin(alpha) * Vector3.up;
             });
         */
-        
+
 
         //Spiral tube
         /*
@@ -138,7 +146,7 @@ public class MeshGenerator : MonoBehaviour
             return OOmega + r * Mathf.Cos(alpha) * OOmega.normalized + r*Mathf.Sin(alpha) * Vector3.up + 2 * r * kX * nTurns * Vector3.up;
             });
         */
-        
+
 
         //Heightmap
         /*
@@ -460,9 +468,9 @@ public class MeshGenerator : MonoBehaviour
         quads[15] = 0;
 
         quads[16] = 0;
-        quads[17] = 7;
+        quads[17] = 3;
         quads[18] = 5;
-        quads[19] = 3;
+        quads[19] = 7;
 
         quads[20] = 1;
         quads[21] = 6;
