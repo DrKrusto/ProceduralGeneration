@@ -402,22 +402,25 @@ namespace HalfEdge
             };
             this.vertices.Add(newVertex);
 
-            HalfEdge nextEdge = new HalfEdge
+            HalfEdge splittedEdge = new HalfEdge
             {
                 index = this.edges.Count,
-                sourceVertex = newVertex,
+                sourceVertex = edge.sourceVertex,
                 face = edge.face,
-                prevEdge = edge,
-                nextEdge = edge.nextEdge,
+                prevEdge = edge.prevEdge,
+                nextEdge = edge,
                 twinEdge = null
             };
 
-            edge.nextEdge = nextEdge;
+            splittedEdge.prevEdge.nextEdge = splittedEdge;
+
+            edge.prevEdge = splittedEdge;
+            edge.sourceVertex = newVertex;
             edge.twinEdge = null;
 
-            newVertex.outgoingEdge = nextEdge;
+            newVertex.outgoingEdge = splittedEdge;
 
-            this.edges.Add(nextEdge);
+            this.edges.Add(splittedEdge);
         }
 
         public void SplitFace(Face face, Vector3 splittingPoint)
@@ -429,7 +432,7 @@ namespace HalfEdge
             };
             this.vertices.Add(newVertex);
 
-            HalfEdge currentEdge = face.edge.nextEdge;
+            HalfEdge currentEdge = face.edge.prevEdge;
             int initialEdgeIndex = currentEdge.index;
             Face currentFace = face;
 
