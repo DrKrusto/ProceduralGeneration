@@ -217,19 +217,26 @@ namespace HalfEdge
                 }
             }
 
-            Gizmos.color = Color.black;
-            style.normal.textColor = Color.blue;
-
             if (drawEdges)
             {
                 foreach (HalfEdge edge in this.edges)
                 {
                     Vector3 pt1 = origin.TransformPoint(edge.sourceVertex.position);
                     Vector3 pt2 = origin.TransformPoint(edge.nextEdge.sourceVertex.position);
+                    Color colorToApply = Color.black;
+                    if (edge.face.edge == edge)
+                        colorToApply = Color.green;
+                    else
+                        colorToApply = Color.blue;
+                    Gizmos.color = colorToApply;
+                    style.normal.textColor = colorToApply;
                     Gizmos.DrawLine(pt1, pt2);
                     Handles.Label((pt1 + pt2) / 2.0f, edge.index.ToString(), style);
                 }
             }
+
+            Gizmos.color = Color.black;
+            style.normal.textColor = Color.blue;
 
             if (drawFaces)
             {
@@ -412,13 +419,15 @@ namespace HalfEdge
                 twinEdge = null
             };
 
+            
             splittedEdge.prevEdge.nextEdge = splittedEdge;
 
             edge.prevEdge = splittedEdge;
             edge.sourceVertex = newVertex;
             edge.twinEdge = null;
 
-            newVertex.outgoingEdge = splittedEdge;
+            newVertex.outgoingEdge = splittedEdge.nextEdge;
+            splittedEdge.sourceVertex.outgoingEdge = splittedEdge;
 
             this.edges.Add(splittedEdge);
         }

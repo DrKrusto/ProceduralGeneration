@@ -64,6 +64,7 @@ public class MeshGenerator : MonoBehaviour
         m_Mf.mesh = mesh;
         test = new HalfEdgeMesh(mesh);
         test.SubdivideCatmullClark();
+        test.SubdivideCatmullClark();
         GUIUtility.systemCopyBuffer = test.ConvertToCSVFormat();
         m_Mf.mesh = test.ConvertToFaceVertexMesh();
 
