@@ -478,6 +478,10 @@ namespace HalfEdge
                 currentEdge.prevEdge.face = currentFace;
                 currentEdge.nextEdge = firstEdge;
 
+                // Make sure that the previous edge reference of next edge of second edge is correctly set
+                // otherwise HUGE bug happens
+                secondEdge.nextEdge.prevEdge = secondEdge;
+
                 this.edges.Add(firstEdge);
                 this.edges.Add(secondEdge);
 
